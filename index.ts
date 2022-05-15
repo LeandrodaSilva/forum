@@ -32,7 +32,15 @@ installGlobals();
 
 const firebaseConfig = JSON.parse(Deno.env.get("FIREBASE_CONFIG"));
 
-const firebaseApp = firebase.initializeApp(firebaseConfig, "forum");
+const firebaseApp = firebase.initializeApp({
+  apiKey: "AIzaSyD7XpeWg3cCAEJflw7XBt-dQyyxZo4SU8A",
+  authDomain: "forum-aa609.firebaseapp.com",
+  projectId: "forum-aa609",
+  storageBucket: "forum-aa609.appspot.com",
+  messagingSenderId: "275192552573",
+  appId: "1:275192552573:web:41b41ca88d860c0802e514",
+  measurementId: "G-1P98CYG1BH"
+}, "forum");
 
 const db = firebase.firestore(firebaseApp);
 
