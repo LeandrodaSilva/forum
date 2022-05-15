@@ -64,6 +64,12 @@ function isSong(value) {
 }
 
 // Returns any documents in the collection
+router.get("/", async (ctx) => {
+  ctx.response.body = {};
+  ctx.response.type = "json";
+});
+
+// Returns any documents in the collection
 router.get("/songs", async (ctx) => {
   const querySnapshot = await db.collection("songs").get();
   ctx.response.body = querySnapshot.docs.map((doc) => doc.data());
