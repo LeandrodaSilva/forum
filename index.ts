@@ -32,16 +32,7 @@ installGlobals();
 
 const firebaseConfig = JSON.parse(Deno.env.get("FIREBASE_CONFIG"));
 
-const firebaseApp = firebase.initializeApp(firebaseConfig, "example");
-
-const auth = firebase.auth(firebaseApp);
-
-/** A map of users that we will log in.  While this tutorial only uses one user
- * retrieved from the environment variables. It demonstrates how this can be
- * easily modified to allow different users to authenticate.
- *
- * @type {Map<string, firebase.User>} */
-const users = new Map();
+const firebaseApp = firebase.initializeApp(firebaseConfig, "forum");
 
 const db = firebase.firestore(firebaseApp);
 
@@ -112,31 +103,6 @@ const app = new Application();
 // This will take the localStorage values and send them to the client as cookies
 // and restore their values on subsequent requests.
 app.use(virtualStorage());
-
-// This demonstrates how to manage multiple logins from Firebase with Deploy,
-// though we will only ever have one authenticated user in this example.
-app.use(async (ctx, next) => {
-  const signedInUid = ctx.cookies.get("LOGGED_IN_UID");
-  const signedInUser = signedInUid != null ? users.get(signedInUid) : undefined;
-  if (!signedInUid || !signedInUser || !auth.currentUser) {
-    // in a real application, this is where we would want to redirect the user
-    // to a sign-in page for our application, instead of grabbing the
-    // authentication details from the environment variables.
-    const creds = await auth.signInWithEmailAndPassword(
-      Deno.env.get("FIREBASE_USERNAME"),
-      Deno.env.get("FIREBASE_PASSWORD"),
-    );
-    const { user } = creds;
-    if (user) {
-      users.set(user.uid, user);
-      ctx.cookies.set("LOGGED_IN_UID", user.uid);
-    } else if (signedInUser && signedInUid.uid !== auth.currentUser?.uid) {
-      await auth.updateCurrentUser(signedInUser);
-    }
-  }
-  return next();
-});
-
 app.use(router.routes());
 app.use(router.allowedMethods());
 
