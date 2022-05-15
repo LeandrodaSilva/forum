@@ -1,0 +1,8 @@
+{
+  "tasks": {
+    "data": "deno task collect && deno task analyze",
+    "collect": "deno run --allow-read=. --allow-write=. scripts/collect.js",
+    "analyze": "deno run --allow-read=. scripts/analyze.js",
+    "dev": "denon run --allow-net --no-check index.ts"
+  }
+}
