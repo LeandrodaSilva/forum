@@ -30,17 +30,17 @@ import { virtualStorage } from "https://deno.land/x/virtualstorage@0.1.0/middlew
 // This will install the polyfill for localStorage
 installGlobals();
 
-const firebaseApp = firebase.initializeApp({
-  apiKey: "AIzaSyD7XpeWg3cCAEJflw7XBt-dQyyxZo4SU8A",
-  authDomain: "forum-aa609.firebaseapp.com",
-  projectId: "forum-aa609",
-  storageBucket: "forum-aa609.appspot.com",
-  messagingSenderId: "275192552573",
-  appId: "1:275192552573:web:41b41ca88d860c0802e514",
-  measurementId: "G-1P98CYG1BH"
-}, "forum");
-
-const db = firebase.firestore(firebaseApp);
+// const firebaseApp = firebase.initializeApp({
+//   apiKey: "AIzaSyD7XpeWg3cCAEJflw7XBt-dQyyxZo4SU8A",
+//   authDomain: "forum-aa609.firebaseapp.com",
+//   projectId: "forum-aa609",
+//   storageBucket: "forum-aa609.appspot.com",
+//   messagingSenderId: "275192552573",
+//   appId: "1:275192552573:web:41b41ca88d860c0802e514",
+//   measurementId: "G-1P98CYG1BH"
+// }, "forum");
+//
+// const db = firebase.firestore(firebaseApp);
 
 const router = new Router();
 
@@ -67,48 +67,48 @@ router.get("/", async (ctx) => {
   ctx.response.type = "json";
 });
 
-// Returns any documents in the collection
-router.get("/songs", async (ctx) => {
-  const querySnapshot = await db.collection("songs").get();
-  ctx.response.body = querySnapshot.docs.map((doc) => doc.data());
-  ctx.response.type = "json";
-});
+// // Returns any documents in the collection
+// router.get("/songs", async (ctx) => {
+//   const querySnapshot = await db.collection("songs").get();
+//   ctx.response.body = querySnapshot.docs.map((doc) => doc.data());
+//   ctx.response.type = "json";
+// });
 
-// Returns the first document that matches the title
-router.get("/songs/:title", async (ctx) => {
-  const { title } = ctx.params;
-  const querySnapshot = await db.collection("songs").where("title", "==", title)
-    .get();
-  const song = querySnapshot.docs.map((doc) => doc.data())[0];
-  if (!song) {
-    ctx.response.status = 404;
-    ctx.response.body = `The song titled "${ctx.params.title}" was not found.`;
-    ctx.response.type = "text";
-  } else {
-    ctx.response.body = querySnapshot.docs.map((doc) => doc.data())[0];
-    ctx.response.type = "json";
-  }
-});
+// // Returns the first document that matches the title
+// router.get("/songs/:title", async (ctx) => {
+//   const { title } = ctx.params;
+//   const querySnapshot = await db.collection("songs").where("title", "==", title)
+//     .get();
+//   const song = querySnapshot.docs.map((doc) => doc.data())[0];
+//   if (!song) {
+//     ctx.response.status = 404;
+//     ctx.response.body = `The song titled "${ctx.params.title}" was not found.`;
+//     ctx.response.type = "text";
+//   } else {
+//     ctx.response.body = querySnapshot.docs.map((doc) => doc.data())[0];
+//     ctx.response.type = "json";
+//   }
+// });
 
-// Adds a document posted (removing any other documents with the same title)
-router.post("/songs", async (ctx) => {
-  const body = ctx.request.body();
-  if (body.type !== "json") {
-    ctx.throw(Status.BadRequest, "Must be a JSON document");
-  }
-  const song = await body.value;
-  if (!isSong(song)) {
-    ctx.throw(Status.BadRequest, "Payload was not well formed");
-  }
-  const querySnapshot = await db
-    .collection("songs")
-    .where("title", "==", song.title)
-    .get();
-  await Promise.all(querySnapshot.docs.map((doc) => doc.ref.delete()));
-  const songsRef = db.collection("songs");
-  await songsRef.add(song);
-  ctx.response.status = Status.NoContent;
-});
+// // Adds a document posted (removing any other documents with the same title)
+// router.post("/songs", async (ctx) => {
+//   const body = ctx.request.body();
+//   if (body.type !== "json") {
+//     ctx.throw(Status.BadRequest, "Must be a JSON document");
+//   }
+//   const song = await body.value;
+//   if (!isSong(song)) {
+//     ctx.throw(Status.BadRequest, "Payload was not well formed");
+//   }
+//   const querySnapshot = await db
+//     .collection("songs")
+//     .where("title", "==", song.title)
+//     .get();
+//   await Promise.all(querySnapshot.docs.map((doc) => doc.ref.delete()));
+//   const songsRef = db.collection("songs");
+//   await songsRef.add(song);
+//   ctx.response.status = Status.NoContent;
+// });
 
 const app = new Application();
 
